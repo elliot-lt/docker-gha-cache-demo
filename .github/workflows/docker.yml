@@ -6,7 +6,11 @@ on:
 jobs:
   branch:
     runs-on: ubuntu-latest
-
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -23,10 +27,10 @@ jobs:
           load: false
           context: .
           file: Dockerfile
-          tags: slow-build:latest
+          tags: localhost:5000/slow-build:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: test
         run: |
-          docker run slow-build cat /etc/alpine-release
+          docker run localhost:5000/slow-build cat /etc/alpine-release
